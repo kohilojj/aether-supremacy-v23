@@ -7,54 +7,58 @@ app.get('/', (req, res) => {
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <title>AETHER: TOTAL CONTROL | PANOPTICON 3.5</title>
+    <title>AETHER: ENFORCER | 8S ENTERTAINMENT</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Share Tech Mono', monospace; }
-        #ui {
-            position: absolute; inset: 0; pointer-events: none;
-            color: #00ff88; padding: 20px; display: flex; flex-direction: column;
-        }
-        .hud-top { display: flex; justify-content: space-between; font-size: 20px; }
-        .crosshair {
-            position: absolute; top: 50%; left: 50%; width: 6px; height: 6px;
-            border: 1px solid #00ff88; transform: translate(-50%, -50%);
-        }
-        #alert-overlay {
-            position: fixed; inset: 0; background: rgba(255, 0, 0, 0.2);
-            display: none; pointer-events: none; animation: flash 1s infinite;
-        }
-        @keyframes flash { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
-        
-        .stat-box { background: rgba(0, 20, 10, 0.8); border: 1px solid #00ff88; padding: 10px; margin-bottom: 5px; }
         #loading-screen {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: fixed; inset: 0; background: radial-gradient(circle, #0a0a1a 0%, #000 100%);
+            z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #00ff88; text-align: center;
         }
+        .progress-container { width: 400px; height: 10px; background: #111; border: 1px solid #00ff88; margin-top: 20px; position: relative; }
+        #progress-bar { height: 100%; background: #00ff88; width: 0%; box-shadow: 0 0 20px #00ff88; transition: width 0.1s; }
+        
+        #ui { position: absolute; inset: 0; pointer-events: none; color: #00ff88; padding: 20px; }
+        .crosshair {
+            position: absolute; top: 50%; left: 50%; width: 30px; height: 30px;
+            border: 2px solid rgba(0, 255, 136, 0.5); transform: translate(-50%, -50%); border-radius: 50%;
+        }
+        .weapon-hud { position: absolute; bottom: 0; right: 50px; width: 300px; height: 200px; background: rgba(0,0,0,0.5); border-top-left-radius: 50px; border: 2px solid #00ff88; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .weapon-model { width: 10px; height: 80px; background: #444; transform: rotate(45deg); box-shadow: 0 0 10px #00ff88; }
+        #alert-msg { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); font-size: 32px; color: #ff0044; display: none; text-shadow: 0 0 20px #ff0044; }
     </style>
 </head>
 <body>
 
 <div id="loading-screen">
-    <h1 style="color: #00ff88; letter-spacing: 5px;">AETHER SYSTEMS LOADING...</h1>
-    <div id="status-text" style="color: #00ff88;">MAPPING PRISON_MESH.FBX...</div>
+    <div style="font-size: 40px; font-weight: 800; text-shadow: 0 0 20px #00ff88;">AETHER SYSTEMS</div>
+    <div id="load-label" style="margin-top: 20px;">INITIALIZING GEOMETRY...</div>
+    <div class="progress-container"><div id="progress-bar"></div></div>
+    <div id="load-pct" style="margin-top: 10px;">0%</div>
 </div>
 
-<div id="alert-overlay"></div>
+<div id="alert-msg">RIOT DETECTED - DEPLOY LETHAL FORCE</div>
 
 <div id="ui">
-    <div class="hud-top">
-        <div class="stat-box">SECTOR: MAIN_BLOCK<br>STATUS: <span id="status-val">NORMAL</span></div>
-        <div class="stat-box">BUDGET: $75,000<br>LOCKDOWN: [R] KEY</div>
+    <div style="display: flex; justify-content: space-between;">
+        <div style="background: rgba(0,40,20,0.8); padding: 15px; border: 1px solid #00ff88;">
+            OFFICER ID: 8S-ENFORCER<br>
+            STAMINA: [||||||||||]<br>
+            THREAT: <span id="threat-lvl">LOW</span>
+        </div>
+        <div style="text-align: right;">
+            SYSTEM TIME: <span id="clock">12:00:00</span><br>
+            FPS: <span id="fps">60</span>
+        </div>
     </div>
     
-    <div class="crosshair"></div>
+    <div class="crosshair">
+        <div style="position: absolute; top: 50%; left: 50%; width: 2px; height: 2px; background: #ff0044; transform: translate(-50%, -50%);"></div>
+    </div>
 
-    <div style="margin-top: auto;">
-        <div class="stat-box" style="width: 250px;">
-            PRISONERS: <span id="p-count">0</span> (HUNGER: <span id="h-count">0%</span>)<br>
-            GUARDS: <span id="g-count">0</span> (ACTIVE)<br>
-            THREAT LEVEL: <span id="t-level" style="color: #00ff88;">LOW</span>
-        </div>
+    <div class="weapon-hud">
+        <div style="margin-right: 20px;">ENFORCER BATON</div>
+        <div class="weapon-model"></div>
     </div>
 </div>
 
@@ -77,164 +81,139 @@ app.get('/', (req, res) => {
     let velocity = new THREE.Vector3();
     let direction = new THREE.Vector3();
     
-    let isLockdown = false;
-    let prisoners = [];
-    let guards = [];
-    let prisonGroup;
+    let entities = [];
+    const ENTITY_COUNT = 25;
 
-    // --- ALUSTUS ---
     init();
 
     async function init() {
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0x020205);
-        scene.fog = new THREE.Fog(0x020205, 1, 150);
+        scene.fog = new THREE.FogExp2(0x020205, 0.03);
         clock = new THREE.Clock();
 
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(10, 1.8, 10);
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 2, 0);
 
-        // Valot
-        const amb = new THREE.AmbientLight(0xffffff, 0.4);
+        const amb = new THREE.AmbientLight(0xffffff, 0.3);
         scene.add(amb);
 
-        const mainLight = new THREE.PointLight(0x00ff88, 1, 100);
-        mainLight.position.set(0, 20, 0);
-        scene.add(mainLight);
+        const sun = new THREE.DirectionalLight(0x00ff88, 0.8);
+        sun.position.set(10, 50, 10);
+        scene.add(sun);
 
-        // --- FBX JA TEKSTUURIT ---
-        const texLoader = new THREE.TextureLoader();
-        const fbxLoader = new FBXLoader();
-        
+        // --- LATAUSLOGIIKKA ---
+        const manager = new THREE.LoadingManager();
+        manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+            const p = (itemsLoaded / itemsTotal) * 100;
+            document.getElementById('progress-bar').style.width = p + '%';
+            document.getElementById('load-pct').innerText = Math.round(p) + '%';
+        };
+
+        const fbxLoader = new FBXLoader(manager);
+        const texLoader = new THREE.TextureLoader(manager);
+
         const prisonTex = texLoader.load('Prison_Texture.png');
-        const fenceTex = texLoader.load('Fences_OP_Texture.png');
 
         fbxLoader.load('Prison_Mesh.fbx', (object) => {
+            document.getElementById('load-label').innerText = "ASSEMBLING WORLD...";
             object.traverse(child => {
                 if(child.isMesh) {
-                    if(child.name.toLowerCase().includes('fence')) {
-                        child.material = new THREE.MeshPhongMaterial({ map: fenceTex, transparent: true, side: THREE.DoubleSide });
-                    } else {
-                        child.material.map = prisonTex;
-                    }
+                    child.material.map = prisonTex;
+                    child.receiveShadow = true;
+                    child.castShadow = true;
                 }
             });
-            object.scale.set(0.06, 0.06, 0.06);
+            object.scale.set(0.08, 0.08, 0.08);
             scene.add(object);
-            prisonGroup = object;
             
-            spawnEntities();
-            document.getElementById('loading-screen').style.display = 'none';
+            spawnAI();
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500);
+            }, 1000);
+        }, (xhr) => {
+            if (xhr.lengthComputable) {
+                const p = (xhr.loaded / xhr.total) * 100;
+                document.getElementById('progress-bar').style.width = p + '%';
+                document.getElementById('load-pct').innerText = Math.round(p) + '%';
+            }
         });
 
-        // Lattia
+        // Maa
         const floor = new THREE.Mesh(
-            new THREE.PlaneGeometry(500, 500),
-            new THREE.MeshPhongMaterial({ color: 0x050505, map: texLoader.load('Terrain_Grass_Dirt.png') })
+            new THREE.PlaneGeometry(1000, 1000),
+            new THREE.MeshPhongMaterial({ color: 0x111111 })
         );
         floor.rotation.x = -Math.PI/2;
         scene.add(floor);
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
         document.body.appendChild(renderer.domElement);
 
         controls = new PointerLockControls(camera, document.body);
-        document.addEventListener('click', () => controls.lock());
-        
+        document.addEventListener('mousedown', () => {
+            if(!controls.isLocked) controls.lock();
+            else attack();
+        });
+
         setupInput();
         animate();
     }
 
-    function spawnEntities() {
-        // Luodaan Vangit (Punertavat)
-        for(let i=0; i<15; i++) {
-            const p = createAgent(0xff5500, "PRISONER");
-            p.mesh.position.set((Math.random()-0.5)*60, 1, (Math.random()-0.5)*60);
-            prisoners.push(p);
+    function spawnAI() {
+        for(let i=0; i < ENTITY_COUNT; i++) {
+            const isGuard = i < 5;
+            const geo = new THREE.CapsuleGeometry(0.3, 1, 4, 8);
+            const mat = new THREE.MeshPhongMaterial({ color: isGuard ? 0x0088ff : 0xff4400 });
+            const mesh = new THREE.Mesh(geo, mat);
+            
+            mesh.position.set((Math.random()-0.5)*80, 1.2, (Math.random()-0.5)*80);
+            scene.add(mesh);
+            
+            entities.push({
+                mesh: mesh,
+                type: isGuard ? 'GUARD' : 'PRISONER',
+                hp: 100,
+                target: new THREE.Vector3(),
+                state: 'IDLE',
+                timer: 0
+            });
         }
-        // Luodaan Vartijat (Siniset)
-        for(let i=0; i<6; i++) {
-            const g = createAgent(0x0088ff, "GUARD");
-            g.mesh.position.set((Math.random()-0.5)*40, 1, (Math.random()-0.5)*40);
-            guards.push(g);
-        }
-        document.getElementById('p-count').innerText = prisoners.length;
-        document.getElementById('g-count').innerText = guards.length;
     }
 
-    function createAgent(color, role) {
-        const group = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.3, 0.8, 4, 8), new THREE.MeshPhongMaterial({ color }));
-        body.position.y = 0.5;
-        group.add(body);
+    function attack() {
+        // Pelaajan hyökkäys
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+        const hits = raycaster.intersectObjects(entities.map(e => e.mesh));
         
-        if(role === "GUARD") {
-            const gun = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.6), new THREE.MeshPhongMaterial({ color: 0x111111 }));
-            gun.position.set(0.4, 0.5, 0.3);
-            group.add(gun);
+        if(hits.length > 0) {
+            const hitObj = hits[0].object;
+            const entity = entities.find(e => e.mesh === hitObj);
+            if(entity && entity.type === 'PRISONER') {
+                entity.hp -= 50;
+                entity.mesh.material.color.set(0xffffff);
+                setTimeout(() => entity.mesh.material.color.set(0xff4400), 100);
+                if(entity.hp <= 0) {
+                    entity.mesh.rotation.z = Math.PI/2;
+                    entity.state = 'DEAD';
+                }
+            }
         }
-
-        scene.add(group);
-        return {
-            mesh: group,
-            role: role,
-            target: new THREE.Vector3(),
-            speed: role === "GUARD" ? 0.05 : 0.03,
-            timer: 0
-        };
     }
 
     function setupInput() {
-        document.addEventListener('keydown', (e) => {
-            if(e.code === 'KeyW') moveForward = true;
-            if(e.code === 'KeyS') moveBackward = true;
-            if(e.code === 'KeyA') moveLeft = true;
-            if(e.code === 'KeyD') moveRight = true;
-            if(e.code === 'KeyR') toggleLockdown();
-        });
-        document.addEventListener('keyup', (e) => {
-            if(e.code === 'KeyW') moveForward = false;
-            if(e.code === 'KeyS') moveBackward = false;
-            if(e.code === 'KeyA') moveLeft = false;
-            if(e.code === 'KeyD') moveRight = false;
-        });
-    }
-
-    function toggleLockdown() {
-        isLockdown = !isLockdown;
-        const overlay = document.getElementById('alert-overlay');
-        const status = document.getElementById('status-val');
-        const threat = document.getElementById('t-level');
-        
-        if(isLockdown) {
-            overlay.style.display = 'block';
-            status.innerText = "LOCKDOWN ACTIVE";
-            status.style.color = "#ff0000";
-            threat.innerText = "CRITICAL";
-            threat.style.color = "#ff0000";
-            playSound(440, 'sawtooth');
-        } else {
-            overlay.style.display = 'none';
-            status.innerText = "NORMAL";
-            status.style.color = "#00ff88";
-            threat.innerText = "LOW";
-            threat.style.color = "#00ff88";
-        }
-    }
-
-    function playSound(freq, type) {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 1);
+        const onKey = (e, val) => {
+            if(e.code === 'KeyW') moveForward = val;
+            if(e.code === 'KeyS') moveBackward = val;
+            if(e.code === 'KeyA') moveLeft = val;
+            if(e.code === 'KeyD') moveRight = val;
+        };
+        document.addEventListener('keydown', (e) => onKey(e, true));
+        document.addEventListener('keyup', (e) => onKey(e, false));
     }
 
     function animate() {
@@ -242,7 +221,6 @@ app.get('/', (req, res) => {
         const delta = clock.getDelta();
 
         if (controls.isLocked) {
-            // Pelaajan fysiikka
             velocity.x -= velocity.x * 10.0 * delta;
             velocity.z -= velocity.z * 10.0 * delta;
             direction.z = Number(moveForward) - Number(moveBackward);
@@ -255,30 +233,31 @@ app.get('/', (req, res) => {
             controls.moveRight(-velocity.x * delta);
             controls.moveForward(-velocity.z * delta);
 
-            // Tekoäly: Vangit ja Vartijat
-            [...prisoners, ...guards].forEach(agent => {
-                agent.timer -= delta;
-                if(agent.timer <= 0) {
-                    // Jos lockdown, vangit juoksevat kenneleihin, vartijat partioivat nopeammin
-                    const range = isLockdown ? 5 : 20;
-                    agent.target.set(
-                        agent.mesh.position.x + (Math.random()-0.5)*range,
-                        agent.mesh.position.y,
-                        agent.mesh.position.z + (Math.random()-0.5)*range
-                    );
-                    agent.timer = 3 + Math.random()*5;
-                }
-                
-                // Kääntyminen ja liike
-                agent.mesh.lookAt(agent.target);
-                agent.mesh.position.lerp(agent.target, agent.speed);
+            // --- AI LOGIIKKA (TAPELUT) ---
+            entities.forEach(e => {
+                if(e.state === 'DEAD') return;
 
-                // Vartijat seuraavat pelaajaa jos tämä juoksee
-                if(agent.role === "GUARD" && camera.position.distanceTo(agent.mesh.position) < 8) {
-                    agent.mesh.lookAt(camera.position.x, agent.mesh.position.y, camera.position.z);
+                e.timer -= delta;
+                if(e.timer <= 0) {
+                    // Etsi uusi kohde
+                    e.target.set(e.mesh.position.x + (Math.random()-0.5)*20, 1.2, e.mesh.position.z + (Math.random()-0.5)*20);
+                    e.timer = 2 + Math.random()*5;
+                    
+                    // Mahdollisuus aloittaa tappelu muiden vankien kanssa
+                    if(e.type === 'PRISONER' && Math.random() > 0.9) {
+                        e.state = 'AGGRESSIVE';
+                        document.getElementById('alert-msg').style.display = 'block';
+                    } else {
+                        e.state = 'WALK';
+                    }
                 }
+
+                e.mesh.lookAt(e.target);
+                e.mesh.position.lerp(e.target, 0.02);
             });
         }
+
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
         renderer.render(scene, camera);
     }
 </script>
@@ -287,5 +266,4 @@ app.get('/', (req, res) => {
     `);
 });
 
-const PORT = 3000;
-app.listen(PORT, () => console.log('AETHER: TOTAL CONTROL ACTIVE AT http://localhost:3000'));
+app.listen(3000, () => console.log('AETHER: ENFORCER RUNNING'));
