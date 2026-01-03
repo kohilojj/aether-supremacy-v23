@@ -9,615 +9,420 @@ app.get('/', (req, res) => {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AETHER: KINGMAKER PROTOCOL | 8S ENTERTAINMENT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;700&family=Oxanium:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;700&family=Oxanium:wght@400;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        /* BASE STYLES */
+        /* --- KOKONAISUUDEN TYYLITTELY --- */
         :root {
-            --bg-dark: #00000a;
-            --ui-accent: #00e6ff; /* Cyan */
-            --ui-danger: #ff3366; /* Red */
-            --ui-success: #33ff88; /* Green */
+            --bg-dark: #020205;
+            --ui-accent: #00e6ff;
+            --ui-danger: #ff0055;
+            --ui-success: #00ff88;
             --ui-gold: #ffcc00;
-            --panel-bg: rgba(10, 10, 25, 0.95);
-            --border-glow: rgba(0, 230, 255, 0.3);
+            --panel-bg: rgba(5, 5, 20, 0.9);
+            --border-glow: rgba(0, 230, 255, 0.4);
             --text-light: #e0e6ed;
+            --crt-line: rgba(18, 16, 16, 0.1);
         }
 
-        * {
-            box-sizing: border-box;
-            user-select: none;
-        }
+        * { box-sizing: border-box; user-select: none; }
 
         body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
+            margin: 0; padding: 0; height: 100vh;
             background-color: var(--bg-dark);
             color: var(--text-light);
             font-family: 'Chakra Petch', sans-serif;
             overflow: hidden;
             display: grid;
-            grid-template-columns: 320px 1fr 320px;
-            grid-template-rows: 70px 1fr 220px;
-            gap: 2px;
+            grid-template-columns: 350px 1fr 350px;
+            grid-template-rows: 80px 1fr 240px;
+            gap: 4px;
         }
 
-        /* GRID COMPONENTS */
+        /* CRT SCANLINE EFFECT */
+        body::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 5000; background-size: 100% 4px, 3px 100%; pointer-events: none;
+        }
+
         .panel {
             background-color: var(--panel-bg);
-            border: 1px solid rgba(0, 230, 255, 0.1);
+            border: 1px solid var(--border-glow);
             position: relative;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 0 20px rgba(0, 230, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            backdrop-filter: blur(12px);
+            display: flex; flex-direction: column; overflow: hidden;
         }
 
         /* HEADER */
         header {
             grid-column: 1 / 4;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 30px;
-            border-bottom: 2px solid var(--border-glow);
-            font-family: 'Oxanium', sans-serif;
-            background-color: rgba(0,0,0,0.8);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px;
+            border-bottom: 3px solid var(--ui-accent);
+            background: linear-gradient(180deg, #000 0%, #050510 100%);
+            z-index: 10;
         }
+
         .studio-logo {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: 5px;
-            color: var(--ui-accent);
-            text-shadow: 0 0 15px var(--ui-accent);
-        }
-        .game-title {
-            font-size: 18px;
-            letter-spacing: 3px;
-            color: var(--text-light);
+            font-family: 'Oxanium'; font-size: 32px; font-weight: 800;
+            color: var(--ui-accent); text-shadow: 0 0 15px var(--ui-accent);
         }
 
-        /* SIDEBARS */
-        .sidebar { overflow-y: auto; }
+        /* ASSET LIST & SIDEBARS */
+        .sidebar { overflow-y: auto; scrollbar-width: none; }
         .sidebar-title {
-            padding: 15px;
-            font-size: 14px;
-            font-weight: 700;
+            padding: 15px; font-size: 14px; font-weight: 700;
+            background: rgba(0, 230, 255, 0.1);
+            color: var(--ui-gold); text-transform: uppercase;
             border-bottom: 1px solid var(--border-glow);
-            color: var(--ui-gold);
-            text-transform: uppercase;
         }
 
-        /* ASSET LIST */
         .asset-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer;
-            transition: 0.2s background-color;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 20px 15px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer; transition: 0.3s; display: flex; justify-content: space-between;
         }
-        .asset-item:hover { background-color: rgba(0, 230, 255, 0.08); }
-        .asset-item.active {
-            border-left: 4px solid var(--ui-accent);
-            background-color: rgba(0, 230, 255, 0.15);
+        .asset-item:hover { background: rgba(0, 230, 255, 0.1); }
+        .asset-item.active { border-left: 5px solid var(--ui-accent); background: rgba(0, 230, 255, 0.2); }
+
+        /* HACKING OVERLAY */
+        #hacking-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            z-index: 10000; display: none; flex-direction: column;
+            align-items: center; justify-content: center;
+            font-family: 'Share Tech Mono', monospace;
         }
-        .asset-name { font-weight: 700; font-size: 15px; }
-        .asset-ticker { font-size: 11px; color: #888; }
-        .asset-price { font-family: 'Oxanium'; font-size: 16px; color: var(--ui-success); }
+
+        .terminal-text { color: var(--ui-success); margin-bottom: 20px; }
 
         /* MAIN CHART */
-        .chart-main {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-glow);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            background: radial-gradient(circle at center, rgba(0, 230, 255, 0.05) 0%, transparent 70%);
-        }
-        .current-price {
-            font-family: 'Oxanium', sans-serif;
-            font-size: 60px;
-            font-weight: 800;
-            line-height: 1;
-            color: var(--ui-accent);
-            text-shadow: 0 0 25px rgba(0, 230, 255, 0.5);
-        }
+        .chart-container { position: relative; flex-grow: 1; display: flex; flex-direction: column; }
+        .chart-header { padding: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .current-price { font-family: 'Oxanium'; font-size: 72px; font-weight: 800; color: var(--ui-accent); }
 
-        /* NEWS/LOGS */
-        #news-feed-display {
-            padding: 10px;
-            font-size: 12px;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-        .news-entry {
-            margin-bottom: 8px;
-            line-height: 1.4;
-            opacity: 0.8;
-            transition: opacity 0.3s;
-        }
-        .news-entry.event { color: var(--ui-danger); font-weight: 700; }
-        .news-entry.ai { color: var(--ui-gold); }
-
-        /* FOOTER / CONTROLS */
+        /* FOOTER */
         footer {
-            grid-column: 1 / 4;
-            display: grid;
-            grid-template-columns: 2fr 1.5fr 1.5fr 2fr;
-            gap: 20px;
-            padding: 20px;
-            background-color: rgba(0,0,0,0.8);
-            border-top: 2px solid var(--border-glow);
+            grid-column: 1 / 4; display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 20px; padding: 25px; border-top: 2px solid var(--ui-accent);
+            background: #000;
         }
-        .footer-card {
-            background-color: rgba(20, 20, 40, 0.8);
-            border: 1px solid rgba(0, 230, 255, 0.2);
-            padding: 15px;
-            border-radius: 5px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .card-label { font-size: 11px; color: #888; text-transform: uppercase; }
-        .card-value {
-            font-family: 'Oxanium', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            margin-top: 5px;
-            color: var(--text-light);
-        }
-        .card-value.gold { color: var(--ui-gold); }
-        .card-value.success { color: var(--ui-success); }
-        .card-value.danger { color: var(--ui-danger); }
 
-        .action-button {
-            padding: 15px;
-            border: none;
-            border-radius: 5px;
-            font-family: 'Oxanium', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s all;
-            text-transform: uppercase;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+        .stat-box {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(0,230,255,0.2);
+            padding: 15px; border-radius: 4px;
         }
-        .action-button.buy { background-color: var(--ui-success); color: #000; }
-        .action-button.buy:active { transform: translateY(4px); box-shadow: none; }
-        .action-button.sell { background-color: var(--ui-danger); color: #fff; }
-        .action-button.sell:active { transform: translateY(4px); box-shadow: none; }
-        .action-button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* AI DISPLAY */
-        .ai-status {
-            display: flex; flex-direction: column; gap: 10px;
-            padding: 15px;
-            border-bottom: 1px solid var(--border-glow);
+        .btn {
+            height: 100%; width: 100%; font-family: 'Oxanium'; font-weight: 800;
+            font-size: 18px; border: none; cursor: pointer; transition: 0.2s;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
         }
-        .ai-entry { display: flex; justify-content: space-between; font-size: 12px; }
-        .ai-entry .name { color: var(--ui-accent); font-weight: 700; }
-        .ai-entry .bal { color: var(--ui-gold); }
+        .btn-buy { background: var(--ui-success); color: #000; }
+        .btn-sell { background: var(--ui-danger); color: #fff; }
+        .btn-hack { background: var(--ui-gold); color: #000; }
+        .btn:hover { filter: brightness(1.2); transform: scale(1.02); }
 
-        /* NOTIFICATIONS */
-        #notification-area {
-            position: fixed; top: 90px; right: 20px; z-index: 1000;
-            width: 300px;
-        }
-        .toast {
-            background-color: var(--panel-bg);
-            border: 1px solid var(--ui-accent);
-            padding: 12px 18px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            box-shadow: 0 0 25px rgba(0, 230, 255, 0.2);
-            animation: slideIn 0.4s ease-out;
-            font-size: 13px;
-        }
-        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        /* ANIMATIONS */
+        @keyframes pulse { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+        .pulse { animation: pulse 1s infinite alternate; }
 
-        /* BOOT SCREEN */
-        #boot-overlay {
-            position: fixed; inset: 0; background-color: var(--bg-dark); z-index: 2000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .boot-text {
-            font-family: 'Oxanium', sans-serif;
-            font-size: 40px;
-            letter-spacing: 10px;
-            color: var(--ui-accent);
-            text-shadow: 0 0 30px var(--ui-accent);
-            margin-bottom: 20px;
-            animation: boot-pulse 2s infinite alternate;
-        }
-        @keyframes boot-pulse { 0% { opacity: 0.6; } 100% { opacity: 1; } }
     </style>
 </head>
-<body onload="bootSequence()">
+<body onload="initSystem()">
 
-<div id="boot-overlay">
-    <div class="studio-logo">8S ENTERTAINMENT</div>
-    <div class="boot-text">AETHER: KINGMAKER PROTOCOL</div>
-    <p style="font-family: 'Chakra Petch'; font-size: 16px; color: #888;">[ INITIALIZING CORE SYSTEMS... CLICK TO CONTINUE ]</p>
+<div id="hacking-modal">
+    <h1 class="terminal-text">> BREACHING CORE_SERVER...</h1>
+    <div id="hack-display" style="font-size: 24px; color: var(--ui-success); background: #000; padding: 40px; border: 1px solid var(--ui-success);">
+        [ CLICK THE CORRECT SEQUENCE ]
+    </div>
+    <div id="hack-controls" style="margin-top: 20px; display: flex; gap: 10px;"></div>
 </div>
 
-<div id="notification-area"></div>
-
 <header>
-    <div class="studio-logo">8S</div>
-    <div class="game-title">KINGMAKER PROTOCOL</div>
-    <div style="font-size: 12px; color: var(--text-light);">
-        <span id="player-reputation" style="color:var(--ui-gold);">REPUTATION: NEUTRAL</span> |
-        <span id="clock-display" style="color:var(--ui-accent);">00:00:00</span>
+    <div class="studio-logo">AETHER // 8S</div>
+    <div id="system-status" style="font-family: 'Share Tech Mono'; color: var(--ui-success);">
+        NODE: HELSINKI-09 | STATUS: SECURE | <span id="clock">00:00:00</span>
+    </div>
+    <div style="text-align: right;">
+        <div style="font-size: 11px; color: #888;">GLOBAL REPUTATION</div>
+        <div id="rep-level" style="color: var(--ui-gold); font-weight: 700;">NEUTRAL CITIZEN</div>
     </div>
 </header>
 
 <div class="panel sidebar">
-    <div class="sidebar-title">MARKET ASSETS</div>
-    <div id="asset-list-ui"></div>
-    <div class="sidebar-title" style="margin-top:10px;">AI COMPETITORS</div>
-    <div id="ai-status-display"></div>
+    <div class="sidebar-title">Market Nodes</div>
+    <div id="asset-list"></div>
 </div>
 
-<div class="panel">
-    <div class="chart-main">
+<div class="panel chart-container">
+    <div class="chart-header">
         <div>
-            <div id="active-asset-name" style="font-size: 18px; font-weight: 700;">GLOBAL RESOURCES LTD</div>
-            <div id="active-asset-ticker" style="font-size: 12px; color: #888;">GRLD</div>
+            <h2 id="active-name" style="margin:0; font-size: 28px;">---</h2>
+            <p id="active-desc" style="margin:5px 0; color: #888; font-size: 14px;">---</p>
         </div>
         <div style="text-align: right;">
-            <div class="current-price" id="main-asset-price">0.00</div>
-            <div id="price-change-pct" style="font-size: 14px; color: var(--ui-success);">+0.00%</div>
+            <div id="active-price" class="current-price">0.00</div>
+            <div id="active-change" style="font-size: 20px;">+0.00%</div>
         </div>
     </div>
-    <canvas id="main-chart-canvas" style="flex-grow: 1; width: 100%;"></canvas>
+    <canvas id="mainChart"></canvas>
 </div>
 
 <div class="panel sidebar">
-    <div class="sidebar-title">GLOBAL NEWSFEED</div>
-    <div id="news-feed-display"></div>
+    <div class="sidebar-title">Live Intelligence Feed</div>
+    <div id="news-feed" style="padding: 15px; font-size: 13px; font-family: 'Share Tech Mono';"></div>
 </div>
 
 <footer>
-    <div class="footer-card">
-        <div class="card-label">AVAILABLE CAPITAL</div>
-        <div class="card-value gold" id="player-balance">$ 100,000</div>
+    <div class="stat-box">
+        <div style="font-size: 11px; color: #888;">LIQUID ASSETS</div>
+        <div id="balance" style="font-size: 28px; color: var(--ui-gold); font-family: 'Oxanium'; font-weight: 800;">$0</div>
     </div>
-    <div class="footer-card">
-        <div class="card-label">TOTAL PORTFOLIO</div>
-        <div class="card-value success" id="player-portfolio">$ 100,000</div>
+    <div class="stat-box">
+        <div style="font-size: 11px; color: #888;">NET WORTH</div>
+        <div id="net-worth" style="font-size: 28px; color: var(--ui-success); font-family: 'Oxanium'; font-weight: 800;">$0</div>
     </div>
-    <div class="footer-card">
-        <div class="card-label">ACTIVE HOLDINGS (<span id="active-holding-ticker">---</span>)</div>
-        <div class="card-value accent" id="player-shares">0.00 UNITS</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="btn btn-buy" onclick="handleTrade('BUY')">ACQUIRE</button>
+        <button class="btn btn-sell" onclick="handleTrade('SELL')">LIQUIDATE</button>
     </div>
-    <div style="display: flex; gap: 10px;">
-        <button class="action-button buy" onclick="playerAction('BUY')">ACQUIRE MAX</button>
-        <button class="action-button sell" onclick="playerAction('SELL')">LIQUIDATE ALL</button>
+    <div>
+        <button class="btn btn-hack" onclick="startHacking()">INITIALIZE BREACH</button>
     </div>
 </footer>
 
 <script>
-    // --- GAME DATA & CONFIGURATION (AAA-LEVEL) ---
-    const ASSETS = [
-        { id: 'global_res', name: 'GLOBAL RESOURCES LTD', ticker: 'GRLD', price: 1200, vola: 8, hist: Array(100).fill(1200), description: "Mining & energy conglomerate." },
-        { id: 'neural_tech', name: 'NEURALINK SYSTEMS', ticker: 'NLNK', price: 450, vola: 15, hist: Array(100).fill(450), description: "Cutting-edge AI and cybernetics." },
-        { id: 'aether_comm', name: 'AETHER COMMS CORP', ticker: 'ACOM', price: 85, vola: 3, hist: Array(100).fill(85), description: "Galactic telecommunications giant." },
-        { id: 'data_haven', name: 'DATA HAVEN INC', ticker: 'DHAV', price: 2000, vola: 25, hist: Array(100).fill(2000), description: "Secure data storage & dark web services." }
-    ];
-
-    const AI_COMPETITORS = [
-        { id: 'triton', name: 'AI TRITON', balance: 150000, shares: {}, strategy: 'bullish', lastAction: 0, reputation: 'Aggressive' },
-        { id: 'medusa', name: 'AI MEDUSA', balance: 180000, shares: {}, strategy: 'bearish', lastAction: 0, reputation: 'Calculated' }
-    ];
-
-    let gameState = {
-        playerBalance: 100000,
-        playerShares: {},
-        activeAssetId: 'global_res',
-        playerReputation: 50, // 0-100 scale, 50 is neutral
-        gameTime: 0, // for events
-        lastEventTick: 0,
-        audioContext: null // For sound effects
+    // --- PELIN DATARAKENNE ---
+    const CONFIG = {
+        TICK_RATE: 1000,
+        SAVE_KEY: 'AETHER_V4_FINAL',
+        INITIAL_CASH: 50000,
+        MAX_NEWS: 25
     };
 
-    const SAVE_KEY = 'AETHER_KINGMAKER_V30';
+    let world = {
+        assets: [
+            { id: 'ION', name: 'ION PROPULSION', price: 150, hist: Array(60).fill(150), vola: 5, desc: "Deep space engine manufacturer." },
+            { id: 'NEU', name: 'NEURO-SYNC', price: 850, hist: Array(60).fill(850), vola: 12, desc: "Direct neural interface protocols." },
+            { id: 'VOID', name: 'VOID MINING', price: 4200, hist: Array(60).fill(4200), vola: 25, desc: "Asteroid belt resource extraction." },
+            { id: 'GHOST', name: 'GHOST DATA', price: 65, hist: Array(60).fill(65), vola: 40, desc: "Encrypted offshore cloud storage." }
+        ],
+        player: {
+            cash: CONFIG.INITIAL_CASH,
+            holdings: {},
+            rep: 50,
+            hackSkill: 1
+        },
+        activeAsset: 'ION'
+    };
 
-    // --- CORE GAME ENGINE ---
-
-    function bootSequence() {
-        document.getElementById('boot-overlay').addEventListener('click', startGame);
-    }
-
-    function startGame() {
-        document.getElementById('boot-overlay').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('boot-overlay').remove();
-            loadGame();
-            initAudio();
-            setInterval(gameTick, 800);
-            setInterval(updateClock, 1000);
-            setInterval(aiAction, 3000);
-            setInterval(randomGameEvent, 10000); // Check for events every 10 seconds
-            updateUI();
-            notify("WELCOME, KINGMAKER. INTERFACE ONLINE.", 'info');
-        }, 800);
-    }
-
-    function gameTick() {
-        gameState.gameTime++;
-        updateAssetPrices();
-        drawChart();
+    // --- MOOTTORI ---
+    function initSystem() {
+        loadProgress();
+        setupChart();
+        setInterval(engineTick, CONFIG.TICK_RATE);
         updateUI();
+        addLog("SYSTEM INITIALIZED. WELCOME TO AETHER.", "ui-accent");
     }
 
-    function updateAssetPrices() {
-        ASSETS.forEach(asset => {
-            let movement = (Math.random() * asset.vola) - (asset.vola / 2);
-            asset.price = Math.max(1, asset.price + (movement * 0.1));
-            asset.hist.shift();
-            asset.hist.push(asset.price);
+    function engineTick() {
+        // Päivitä kurssit
+        world.assets.forEach(a => {
+            let change = (Math.random() - 0.5) * a.vola;
+            // Markkinamanipulaatio-vaikutus
+            a.price = Math.max(1, a.price + change);
+            a.hist.shift();
+            a.hist.push(a.price);
         });
-    }
 
-    function aiAction() {
-        AI_COMPETITORS.forEach(ai => {
-            const activeAsset = ASSETS.find(a => a.id === gameState.activeAssetId); // AI's also focus on active asset for simplicity
-            if (Math.random() < 0.3 && (gameState.gameTime - ai.lastAction > 5)) { // AI acts every few ticks
-                ai.lastAction = gameState.gameTime;
-                if (ai.strategy === 'bullish' && ai.balance > activeAsset.price * 5) {
-                    const buyAmount = Math.floor(ai.balance / activeAsset.price * 0.2);
-                    ai.shares[activeAsset.id] = (ai.shares[activeAsset.id] || 0) + buyAmount;
-                    ai.balance -= buyAmount * activeAsset.price;
-                    addNews(`AI ${ai.name} initiated major BUY of ${activeAsset.ticker}.`, 'ai');
-                } else if (ai.strategy === 'bearish' && ai.shares[activeAsset.id] > 0) {
-                    const sellAmount = Math.floor(ai.shares[activeAsset.id] * 0.3);
-                    ai.balance += sellAmount * activeAsset.price;
-                    ai.shares[activeAsset.id] -= sellAmount;
-                    addNews(`AI ${ai.name} liquidated ${sellAmount} units of ${activeAsset.ticker}.`, 'ai');
-                }
-            }
-        });
-    }
+        // Satunnaiset tapahtumat
+        if(Math.random() > 0.96) triggerEvent();
 
-    function randomGameEvent() {
-        if (gameState.gameTime - gameState.lastEventTick < 20) return; // Prevent too frequent events
-        gameState.lastEventTick = gameState.gameTime;
-
-        const events = [
-            { msg: "MARKET CRASH ALERT! SYSTEMIC FAILURE DETECTED! (-20% price drop)", type: 'crash', effect: 0.8 },
-            { msg: "TECH BOOM! NEW AI BREAKTHROUGH ANNOUNCED! (+15% price surge)", type: 'boom', effect: 1.15 },
-            { msg: "MAJOR CYBER ATTACK ON DATA HAVEN! (-30% for DHAV)", type: 'cyber', asset: 'data_haven', effect: 0.7 }
-        ];
-        const event = events[Math.floor(Math.random() * events.length)];
-        
-        ASSETS.forEach(asset => {
-            if (!event.asset || event.asset === asset.id) {
-                asset.price *= event.effect;
-                asset.vola *= (event.effect > 1 ? 1.2 : 0.8); // Volatility changes with events
-                asset.price = Math.max(1, asset.price);
-            }
-        });
-        addNews(`GLOBAL EVENT: ${event.msg}`, 'event');
-        notify(event.msg, 'event');
-        playSound('event');
-    }
-
-    // --- PLAYER ACTIONS ---
-
-    function playerAction(type) {
-        let activeAsset = ASSETS.find(a => a.id === gameState.activeAssetId);
-        if (type === 'BUY' && gameState.playerBalance > 0) {
-            let unitsToBuy = gameState.playerBalance / activeAsset.price;
-            gameState.playerShares[activeAsset.id] = (gameState.playerShares[activeAsset.id] || 0) + unitsToBuy;
-            gameState.playerBalance = 0;
-            addNews(`PLAYER executed BUY of ${unitsToBuy.toFixed(2)} ${activeAsset.ticker}.`, 'player');
-            notify(`Bought ${unitsToBuy.toFixed(2)} ${activeAsset.ticker}`, 'success');
-            playSound('buy');
-        } else if (type === 'SELL' && (gameState.playerShares[activeAsset.id] || 0) > 0) {
-            let unitsToSell = gameState.playerShares[activeAsset.id];
-            gameState.playerBalance += unitsToSell * activeAsset.price;
-            gameState.playerShares[activeAsset.id] = 0;
-            addNews(`PLAYER executed SELL of ${unitsToSell.toFixed(2)} ${activeAsset.ticker}.`, 'player');
-            notify(`Sold ${unitsToSell.toFixed(2)} ${activeAsset.ticker}`, 'danger');
-            playSound('sell');
-        }
-        saveGame();
         updateUI();
+        renderChart();
     }
 
-    function selectAsset(id) {
-        gameState.activeAssetId = id;
-        updateUI();
-    }
-
-    // --- UI RENDERING & UPDATES ---
-
+    // --- UI JA GRAFIIKKA ---
     function updateUI() {
-        const activeAsset = ASSETS.find(a => a.id === gameState.activeAssetId);
-
-        // Header
-        document.getElementById('player-reputation').innerText = `REPUTATION: ${getReputationText(gameState.playerReputation)}`;
-        document.getElementById('clock-display').innerText = new Date().toLocaleTimeString();
-
-        // Asset List
-        const assetListUI = document.getElementById('asset-list-ui');
-        assetListUI.innerHTML = '';
-        ASSETS.forEach(asset => {
-            const div = document.createElement('div');
-            div.className = `asset-item ${asset.id === gameState.activeAssetId ? 'active' : ''}`;
-            div.onclick = () => selectAsset(asset.id);
-            div.innerHTML = `
-                <div>
-                    <div class="asset-name">${asset.name}</div>
-                    <div class="asset-ticker">${asset.ticker}</div>
-                </div>
-                <div class="asset-price" style="color:${asset.price >= asset.hist[99] ? 'var(--ui-success)' : 'var(--ui-danger)'}">
-                    ${asset.price.toFixed(2)}
-                </div>
-            `;
-            assetListUI.appendChild(div);
-        });
-
-        // AI Status
-        const aiStatusDisplay = document.getElementById('ai-status-display');
-        aiStatusDisplay.innerHTML = '';
-        AI_COMPETITORS.forEach(ai => {
-            let totalAiValue = ai.balance;
-            for(let id in ai.shares) {
-                const asset = ASSETS.find(a => a.id === id);
-                if (asset) totalAiValue += ai.shares[id] * asset.price;
-            }
-            const div = document.createElement('div');
-            div.className = 'ai-status';
-            div.innerHTML = `
-                <div class="ai-entry"><span class="name">${ai.name}</span><span>Value: <span class="bal">$ ${Math.floor(totalAiValue).toLocaleString()}</span></span></div>
-                <div class="ai-entry"><span style="color:#888;">Strategy: ${ai.strategy}</span><span>Reputation: ${ai.reputation}</span></div>
-            `;
-            aiStatusDisplay.appendChild(div);
-        });
-
-        // Main Chart Area
-        document.getElementById('active-asset-name').innerText = activeAsset.name;
-        document.getElementById('active-asset-ticker').innerText = activeAsset.ticker;
-        document.getElementById('main-asset-price').innerText = activeAsset.price.toFixed(2);
-        const priceChangePct = (activeAsset.price - activeAsset.hist[0]) / activeAsset.hist[0] * 100;
-        document.getElementById('price-change-pct').innerText = `${priceChangePct >= 0 ? '+' : ''}${priceChangePct.toFixed(2)}%`;
-        document.getElementById('price-change-pct').style.color = priceChangePct >= 0 ? 'var(--ui-success)' : 'var(--ui-danger)';
-
-        // Footer
-        document.getElementById('player-balance').innerText = `$ ${Math.floor(gameState.playerBalance).toLocaleString()}`;
+        const asset = world.assets.find(a => a.id === world.activeAsset);
         
-        let totalPortfolioValue = gameState.playerBalance;
-        for (let id in gameState.playerShares) {
-            const asset = ASSETS.find(a => a.id === id);
-            if (asset) totalPortfolioValue += gameState.playerShares[id] * asset.price;
-        }
-        document.getElementById('player-portfolio').innerText = `$ ${Math.floor(totalPortfolioValue).toLocaleString()}`;
+        // Header & Stats
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        document.getElementById('balance').innerText = "$" + Math.floor(world.player.cash).toLocaleString();
+        
+        let net = world.player.cash;
+        world.assets.forEach(a => net += (world.player.holdings[a.id] || 0) * a.price);
+        document.getElementById('net-worth').innerText = "$" + Math.floor(net).toLocaleString();
 
-        document.getElementById('active-holding-ticker').innerText = activeAsset.ticker;
-        document.getElementById('player-shares').innerText = `${(gameState.playerShares[activeAsset.id] || 0).toFixed(2)} UNITS`;
+        // Active Asset
+        document.getElementById('active-name').innerText = asset.name;
+        document.getElementById('active-desc').innerText = asset.desc;
+        document.getElementById('active-price').innerText = asset.price.toFixed(2);
+        
+        const change = ((asset.price - asset.hist[0]) / asset.hist[0] * 100).toFixed(2);
+        const changeEl = document.getElementById('active-change');
+        changeEl.innerText = (change >= 0 ? "+" : "") + change + "%";
+        changeEl.style.color = change >= 0 ? "var(--ui-success)" : "var(--ui-danger)";
+
+        // List
+        const list = document.getElementById('asset-list');
+        list.innerHTML = world.assets.map(a => \`
+            <div class="asset-item \${a.id === world.activeAsset ? 'active' : ''}" onclick="world.activeAsset='\${a.id}'">
+                <div>
+                    <strong>\${a.id}</strong><br>
+                    <small style="color:#666">\${(world.player.holdings[a.id] || 0).toFixed(1)} UNITS</small>
+                </div>
+                <div style="text-align:right">
+                    <span style="color:var(--ui-accent)">\${a.price.toFixed(2)}</span>
+                </div>
+            </div>
+        \`).join('');
     }
 
-    function drawChart() {
-        const canvas = document.getElementById('main-chart-canvas');
+    function setupChart() {
+        const canvas = document.getElementById('mainChart');
         const ctx = canvas.getContext('2d');
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        const activeAsset = ASSETS.find(a => a.id === gameState.activeAssetId);
+        const resize = () => {
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight - 150;
+        };
+        window.onresize = resize;
+        resize();
+    }
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function renderChart() {
+        const canvas = document.getElementById('mainChart');
+        const ctx = canvas.getContext('2d');
+        const asset = world.assets.find(a => a.id === world.activeAsset);
+        
+        ctx.clearRect(0,0, canvas.width, canvas.height);
+        
+        const min = Math.min(...asset.hist) * 0.98;
+        const max = Math.max(...asset.hist) * 1.02;
+        const range = max - min;
 
-        // Grid Lines
-        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-        ctx.lineWidth = 1;
-        for (let i = 0; i <= 10; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0, i * (canvas.height / 10));
-            ctx.lineTo(canvas.width, i * (canvas.height / 10));
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(i * (canvas.width / 10), 0);
-            ctx.lineTo(i * (canvas.width / 10), canvas.height);
-            ctx.stroke();
-        }
-
-        // Chart Line
-        const minPrice = Math.min(...activeAsset.hist) * 0.95;
-        const maxPrice = Math.max(...activeAsset.hist) * 1.05;
-        const priceRange = maxPrice - minPrice;
-
+        // Piirrä viiva
         ctx.beginPath();
-        ctx.strokeStyle = 'var(--ui-accent)';
-        ctx.lineWidth = 4;
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = 'var(--ui-accent)';
+        ctx.strokeStyle = '#00e6ff';
+        ctx.lineWidth = 3;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#00e6ff';
 
-        activeAsset.hist.forEach((p, i) => {
-            const x = i * (canvas.width / activeAsset.hist.length);
-            const y = canvas.height - ((p - minPrice) / (priceRange || 1) * canvas.height);
-            if (i === 0) ctx.moveTo(x, y);
+        asset.hist.forEach((p, i) => {
+            const x = (i / (asset.hist.length-1)) * canvas.width;
+            const y = canvas.height - ((p - min) / range * canvas.height);
+            if(i === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
         });
         ctx.stroke();
 
-        // Gradient Fill
+        // Täyttö
         ctx.lineTo(canvas.width, canvas.height);
         ctx.lineTo(0, canvas.height);
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, 'rgba(0, 230, 255, 0.2)');
-        gradient.addColorStop(1, 'transparent');
-        ctx.fillStyle = gradient;
-        ctx.shadowBlur = 0;
+        const grad = ctx.createLinearGradient(0,0,0, canvas.height);
+        grad.addColorStop(0, 'rgba(0, 230, 255, 0.2)');
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
         ctx.fill();
     }
 
-    function addNews(msg, type = 'info') {
-        const newsFeed = document.getElementById('news-feed-display');
-        const entry = document.createElement('div');
-        entry.className = `news-entry ${type}`;
-        entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}`;
-        newsFeed.prepend(entry);
-        if (newsFeed.children.length > 20) newsFeed.lastChild.remove();
+    // --- PELILOGIIKKA ---
+    function handleTrade(type) {
+        const asset = world.assets.find(a => a.id === world.activeAsset);
+        if(type === 'BUY' && world.player.cash >= asset.price) {
+            const amt = Math.floor(world.player.cash / asset.price);
+            world.player.holdings[asset.id] = (world.player.holdings[asset.id] || 0) + amt;
+            world.player.cash -= amt * asset.price;
+            addLog(\`ACQUIRED \${amt} UNITS OF \${asset.id}\`, "ui-success");
+        } else if(type === 'SELL' && (world.player.holdings[asset.id] || 0) > 0) {
+            const amt = world.player.holdings[asset.id];
+            world.player.cash += amt * asset.price;
+            world.player.holdings[asset.id] = 0;
+            addLog(\`LIQUIDATED \${amt.toFixed(2)} UNITS OF \${asset.id}\`, "ui-danger");
+        }
+        saveProgress();
     }
 
-    function notify(message, type = 'info') {
-        const notificationArea = document.getElementById('notification-area');
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.innerText = message;
-        notificationArea.prepend(toast);
-        setTimeout(() => toast.style.opacity = '0', 3000);
-        setTimeout(() => toast.remove(), 3500);
+    function triggerEvent() {
+        const events = [
+            { t: "MARKET CRASH", m: "Global system failure!", effect: 0.7, color: "var(--ui-danger)" },
+            { t: "TECH BOOM", m: "New AI singularity reached!", effect: 1.3, color: "var(--ui-success)" },
+            { t: "CYBER ATTACK", m: "Data nodes compromised!", effect: 0.8, color: "var(--ui-gold)" }
+        ];
+        const e = events[Math.floor(Math.random() * events.length)];
+        world.assets.forEach(a => a.price *= e.effect);
+        addLog(\`\${e.t}: \${e.m}\`, e.color);
     }
 
-    function getReputationText(score) {
-        if (score > 80) return "LEGENDARY";
-        if (score > 60) return "RESPECTED";
-        if (score > 40) return "NEUTRAL";
-        if (score > 20) return "SUSPICIOUS";
-        return "CRIMINAL";
+    function addLog(msg, color) {
+        const feed = document.getElementById('news-feed');
+        const div = document.createElement('div');
+        div.style.color = color;
+        div.style.marginBottom = "5px";
+        div.innerHTML = \`[\${new Date().toLocaleTimeString()}] > \${msg}\`;
+        feed.prepend(div);
+        if(feed.children.length > CONFIG.MAX_NEWS) feed.lastChild.remove();
     }
 
-    // --- SAVE/LOAD SYSTEM ---
-    function saveGame() {
-        localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
-        addNews("Game state SAVED.", 'info');
-    }
+    // --- HAKKERI-MINIPELI ---
+    let hackSequence = [];
+    function startHacking() {
+        const modal = document.getElementById('hacking-modal');
+        const controls = document.getElementById('hack-controls');
+        modal.style.display = 'flex';
+        controls.innerHTML = '';
+        
+        hackSequence = Array.from({length: 4}, () => Math.floor(Math.random() * 9));
+        document.getElementById('hack-display').innerText = "SEQUENCE REQUIRED: " + hackSequence.join(" - ");
 
-    function loadGame() {
-        const savedState = localStorage.getItem(SAVE_KEY);
-        if (savedState) {
-            gameState = JSON.parse(savedState);
-            addNews("Game state LOADED.", 'info');
+        for(let i=0; i<10; i++) {
+            const b = document.createElement('button');
+            b.innerText = i;
+            b.className = 'btn';
+            b.style.padding = '10px 20px';
+            b.onclick = () => checkHack(i);
+            controls.appendChild(b);
         }
     }
 
-    // --- AUDIO SYSTEM (BASIC) ---
-    function initAudio() {
-        gameState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    let currentInput = [];
+    function checkHack(val) {
+        currentInput.push(val);
+        if(currentInput[currentInput.length-1] !== hackSequence[currentInput.length-1]) {
+            addLog("BREACH FAILED: SECURITY COUNTERMEASURES ACTIVE", "var(--ui-danger)");
+            closeHack();
+            return;
+        }
+
+        if(currentInput.length === hackSequence.length) {
+            const asset = world.assets.find(a => a.id === world.activeAsset);
+            asset.price *= 1.5; // Manipuloi hintaa ylöspäin!
+            addLog("BREACH SUCCESSFUL: MARKET DATA MANIPULATED", "var(--ui-success)");
+            closeHack();
+        }
     }
 
-    function playSound(type) {
-        if (!gameState.audioContext) return;
-        const oscillator = gameState.audioContext.createOscillator();
-        const gainNode = gameState.audioContext.createGain();
+    function closeHack() {
+        document.getElementById('hacking-modal').style.display = 'none';
+        currentInput = [];
+    }
 
-        oscillator.connect(gainNode);
-        gainNode.connect(gameState.audioContext.destination);
+    // --- TALLENNUS ---
+    function saveProgress() {
+        localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify(world));
+    }
 
-        if (type === 'buy') {
-            oscillator.frequency.setValueAtTime(440, gameState.audioContext.currentTime); // A4
-            gainNode.gain.setValueAtTime(0.3, gameState.audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, gameState.audioContext.currentTime + 0.2);
-        } else if (type === 'sell') {
-            oscillator.frequency.setValueAtTime(220, gameState.audioContext.currentTime); // A3
-            gainNode.gain.setValueAtTime(0.3, gameState.audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, gameState.audioContext.currentTime + 0.2);
-        } else if (type === 'event') {
-            oscillator.type = 'sawtooth';
-            oscillator.frequency.setValueAtTime(100, gameState.audioContext.currentTime);
-            oscillator.frequency.linearRampToValueAtTime(50, gameState.audioContext.currentTime + 0.5);
-            gainNode.gain.setValueAtTime(0.4, gameState
+    function loadProgress() {
+        const data = localStorage.getItem(CONFIG.SAVE_KEY);
+        if(data) world = JSON.parse(data);
+    }
+
+</script>
+</body>
+</html>
+    `);
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`SERVER RUNNING AT http://localhost:${PORT}`);
+});
