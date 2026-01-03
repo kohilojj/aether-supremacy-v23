@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>AETHER-SUPREMACY // V23</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root { --neon: #00ff88; --alert: #ff0044; --bg: #010108; }
+        body {
+            margin: 0; background: var(--bg); color: var(--neon);
+            font-family: 'Share Tech Mono', monospace;
+            display: grid; grid-template-columns: 400px 1fr;
+            grid-template-rows: 1fr 200px; height: 100vh; overflow: hidden;
+        }
+
+        /* --- LEFT SIDE: NEURAL CORE --- */
+        .sidebar {
+            background: rgba(0, 30, 20, 0.95); border-right: 2px solid var(--neon);
+            padding: 25px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        #neural-orb {
+            width: 250px; height: 250px; margin: 0 auto;
+            border-radius: 50%; border: 2px solid var(--neon);
+            background: radial-gradient(circle, var(--neon) 0%, transparent 75%);
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.3);
+            position: relative; cursor: pointer; transition: 0.5s;
+        }
+
+        .scanning #neural-orb { background: radial-gradient(circle, var(--alert) 0%, transparent 75%); box-shadow: 0 0 80px var(--alert); border-color: var(--alert); }
+
+        /* --- MAIN VIEW: PRISON & DATA --- */
+        .main-display {
+            position: relative; padding: 20px;
+            background: radial-gradient(circle at center, #0a2a1a 0%, #000 100%);
+        }
+
+        .data-window {
+            border: 1px solid var(--neon); background: rgba(0,0,0,0.9);
+            height: 80%; padding: 20px; overflow-y: auto; display: none;
+        }
+
+        /* --- FOOTER: TERMINAL --- */
+        .terminal {
+            grid-column: 1 / 3; background: #000; border-top: 2px solid var(--neon);
+            padding: 20px; display: flex; gap: 30px;
+        }
+
+        #log-stream { flex: 1; overflow-y: auto; font-size: 13px; color: #008844; }
+
+        .btn-action {
+            background: var(--neon); color: #000; border: none; padding: 15px;
+            font-family: 'Orbitron'; font-weight: bold; cursor: pointer; width: 100%;
+        }
+        .btn-action:hover { background: #fff; box-shadow: 0 0 20px #fff; }
+
+        /* PRISON RADAR SIMULATION */
+        #radar {
+            width: 100%; height: 300px; border: 1px dashed var(--neon);
+            margin-top: 20px; position: relative; overflow: hidden;
+        }
+        .radar-line { position: absolute; width: 100%; height: 2px; background: var(--neon); top: 0; animation: radarScan 4s infinite linear; }
+        @keyframes radarScan { from { top: 0; } to { top: 100%; } }
+    </style>
+</head>
+<body id="core-body">
+
+    <div class="sidebar">
+        <h1 style="font-family: 'Orbitron'; font-size: 18px; text-align: center; letter-spacing: 5px;">AETHER V23</h1>
+        
+        <div id="neural-orb" onclick="startSynapse()"></div>
+        <p id="status-text" style="text-align: center;">STATUS: STANDBY</p>
+
+        <div style="border: 1px solid rgba(0,255,136,0.3); padding: 10px; font-size: 11px;">
+            SYSTEM: OMNI-SUPREMACY<br>
+            VERSION: 23.0.4<br>
+            SECURITY: MAXIMAL<br>
+            NODE_BYPASS: ACTIVE
+        </div>
+
+        <button class="btn-action" onclick="startSynapse()">AKTIVOI NEURAALILINKKI</button>
+    </div>
+
+    <div class="main-display">
+        <div id="home-ui" style="text-align: center; margin-top: 100px;">
+            <h1 style="font-size: 6rem; opacity: 0.1; margin: 0;">SUPREMACY</h1>
+            <p>Puhu komento: "Analysoi vankila", "Hälytys" tai "Hae keksintö"</p>
+        </div>
+
+        <div id="prison-win" class="data-window">
+            <h3>PRISON_BREAKOUT_ANALYSIS</h3>
+            <div id="radar">
+                <div class="radar-line"></div>
+                <div id="targets"></div>
+            </div>
+            <p id="analysis-text">Skannataan Prison_Mesh.fbx dataa...</p>
+        </div>
+    </div>
+
+    <div class="terminal">
+        <div id="log-stream">
+            > AETHER-SUPREMACY-V23 ONLINE.<br>
+            > Havaitut tiedostot: Prison_Mesh.fbx, DesertSkybox.png...<br>
+            > Valmiina operointiin.
+        </div>
+        <div style="width: 300px; color: #555; font-size: 12px;">
+            HAVAITTU SIGNAALI:<br>
+            <span id="speech-preview" style="color: var(--neon);">---</span>
+        </div>
+    </div>
+
+    <script>
+        const logStream = document.getElementById('log-stream');
+        const speechPreview = document.getElementById('speech-preview');
+        const body = document.getElementById('core-body');
+        
+        const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const synth = window.speechSynthesis;
+        let recognition;
+
+        if (Recognition) {
+            recognition = new Recognition();
+            recognition.lang = 'fi-FI';
+            recognition.onresult = (event) => {
+                const cmd = event.results[0][0].transcript.toLowerCase();
+                handleAether(cmd);
+            };
+            recognition.onend = () => body.classList.remove('scanning');
+        }
+
+        function addLog(msg) {
+            logStream.innerHTML += `<br>> ${msg}`;
+            logStream.scrollTop = logStream.scrollHeight;
+        }
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fi-FI';
+            utterance.pitch = 0.7;
+            synth.speak(utterance);
+            addLog(`AI: ${text}`);
+        }
+
+        function startSynapse() {
+            if (!recognition) return alert("Selaimesi ei tue AETHER-linkkiä.");
+            recognition.start();
+            body.classList.add('scanning');
+            document.getElementById('status-text').innerText = "STATUS: LISTENING";
+            addLog("NEURAALILINKKI AVATTU...");
+        }
+
+        function handleAether(cmd) {
+            speechPreview.innerText = cmd;
+            addLog(`USER: ${cmd}`);
+            
+            document.getElementById('home-ui').style.display = 'none';
+            const prisonWin = document.getElementById('prison-win');
+
+            if (cmd.includes("vankila") || cmd.includes("analysoi")) {
+                prisonWin.style.display = 'block';
+                speak("Käynnistetään vankilapaon simulointi. Analysoidaan Prison Mesh tiedostoja.");
+                runAnalysis();
+            }
+            else if (cmd.includes("hälytys")) {
+                speak("VAROITUS. JÄRJESTELMÄN LUKITUS AKTIVOITU.");
+                body.style.filter = "invert(1) hue-rotate(180deg)";
+                setTimeout(() => body.style.filter = "none", 2000);
+            }
+            else {
+                speak("Komento tunnistettu. Suoritetaan Supremacy-protokolla.");
+            }
+        }
+
+        function runAnalysis() {
+            const text = document.getElementById('analysis-text');
+            const steps = [
+                "Ladataan koordinaatit...",
+                "Havaittu vartiotornit: 4 kpl",
+                "Heikko kohta löytynyt itämuurista.",
+                "Pako-reitti laskettu DesertSkyboxin suuntaan."
+            ];
+            let i = 0;
+            const interval = setInterval(() => {
+                text.innerHTML += `<br>[OK] ${steps[i]}`;
+                i++;
+                if (i >= steps.length) clearInterval(interval);
+            }, 1500);
+        }
+
+        // Tausta-ajo (Matrix flow)
+        setInterval(() => {
+            if(Math.random() > 0.9) addLog("SYS_SYNC: " + Math.random().toString(36).substring(7));
+        }, 3000);
+    </script>
+</body>
+</html>
