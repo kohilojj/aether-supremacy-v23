@@ -2,74 +2,28 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER v27 | Ohjekeskus</title>
-    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>AETHER v27 | Digitaalinen Suojelija</title>
     <style>
-        :root { --primary: #ff4d4d; --secondary: #ffafcc; --bg: #0d0d0d; --card: #1a1a1a; }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-        
-        .hero { padding: 80px 20px; text-align: center; background: radial-gradient(circle at center, #250a0a 0%, #0d0d0d 100%); }
-        h1 { font-family: 'Special Elite', cursive; font-size: 50px; color: var(--primary); margin: 0; }
-        .tagline { color: var(--secondary); font-size: 18px; letter-spacing: 2px; }
-
-        .guide-section { max-width: 900px; margin: 40px auto; padding: 20px; }
-        .step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .step-card { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid #333; position: relative; }
-        .step-num { position: absolute; top: -15px; left: 20px; background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
-
-        .visual-demo { background: #000; border-radius: 10px; margin-top: 20px; padding: 15px; border-left: 4px solid var(--secondary); }
-        .code-box { background: #050505; color: #00ff41; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; overflow-x: auto; }
-
-        .btn-download { display: inline-block; margin-top: 40px; padding: 20px 40px; background: var(--primary); color: white; text-decoration: none; border-radius: 50px; font-weight: bold; font-family: 'Special Elite'; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 77, 77, 0.4); }
-        .btn-download:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 77, 77, 0.6); }
-
-        footer { text-align: center; padding: 40px; font-size: 12px; color: #666; }
+        body { background: #000; color: #ff4d4d; font-family: 'Courier New', monospace; text-align: center; padding: 50px; }
+        .box { border: 2px solid #ff4d4d; padding: 30px; display: inline-block; border-radius: 15px; background: #111; }
+        h1 { font-size: 3em; text-shadow: 0 0 10px #ff4d4d; }
+        .status { color: #ffafcc; font-size: 1.2em; margin-bottom: 20px; }
+        .btn { background: #ff4d4d; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-block; margin-top: 20px; }
+        .step { text-align: left; max-width: 500px; margin: 20px auto; color: #ccc; }
     </style>
 </head>
 <body>
-
-<div class="hero">
-    <h1>AETHER v27</h1>
-    <p class="tagline">SINUN DIGITAALINEN OMATUNTOSI</p>
-    <a href="https://github.com/kohilojj/aether-supremacy-v23/archive/refs/heads/main.zip" class="btn-download">LATAA LISÄOSA (.ZIP)</a>
-</div>
-
-<div class="guide-section">
-    <div class="step-grid">
-        <div class="step-card">
-            <div class="step-num">1</div>
-            <h3>Lataa & Pura</h3>
-            <p>Klikkaa yllä olevaa painiketta ja pura ZIP-tiedosto tietokoneellesi. Sisältää tiedostot: manifest.json ja content.js.</p>
-        </div>
-
-        <div class="step-card">
-            <div class="step-num">2</div>
-            <h3>Aktivoi Firefoxissa</h3>
-            <p>Kirjoita osoiteriville <b>about:debugging</b>. Valitse 'This Firefox' ja klikkaa 'Load Temporary Add-on'.</p>
-        </div>
-
-        <div class="step-card">
-            <div class="step-num">3</div>
-            <h3>Ole Vapaa</h3>
-            <p>Aether hoitaa loput. Se puhdistaa saapuvat viestit ja varoittaa sinua, jos olet lähettämässä jotain ilkeää.</p>
-        </div>
-    </div>
-
-    <div class="visual-demo">
-        <h4>Miten se toimii?</h4>
-        <p>Jos kirjoitat:</p>
-        <div class="code-box">"Oot vitun ruma"</div>
-        <p>Aether muuttaa sen muotoon:</p>
-        <div class="code-box" style="color: var(--secondary);">"Oletpa sinä mielenkiintoinen persoona! ✨"</div>
+    <div class="box">
+        <h1>AETHER v27.1</h1>
+        <p class="status">🛡️ STATUS: AKTIVITTU / SUOJAUS PÄÄLLÄ</p>
         
+        <div class="step">
+            <p><b>1.</b> Lisää GitHubiin <b>manifest.json</b></p>
+            <p><b>2.</b> Lisää GitHubiin <b>content.js</b></p>
+            <p><b>3.</b> Lataa ne Firefoxiin (about:debugging)</p>
+        </div>
+
+        <a href="https://github.com/kohilojj/aether-supremacy-v23" class="btn">KATSO KOODIT GITHUBISTA</a>
     </div>
-</div>
-
-<footer>
-    <p>Luotu yhteistyössä Keksijän, Saulin ja Auroran kanssa.</p>
-    <p>Salasana ohitukseen: <b>aurora_vapaa</b></p>
-</footer>
-
 </body>
 </html>
