@@ -3,225 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER-05 | SUPREMACY</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>AETHER SUPREMACY v23 | The Guardian</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --neon: #00ff88;
-            --alert: #ff0044;
-            --bg: #010108;
-            --panel: rgba(0, 20, 10, 0.95);
-        }
+        :root { --accent: #ff4d4d; --bg: #050505; --text: #00ff41; }
+        body { background: var(--bg); color: var(--text); font-family: 'Courier Prime', monospace; margin: 0; padding: 20px; line-height: 1.6; }
+        
+        .container { max-width: 800px; margin: 0 auto; border: 1px solid #333; padding: 40px; box-shadow: 0 0 50px rgba(0,255,65,0.1); }
+        h1 { font-family: 'Special Elite', cursive; color: var(--accent); font-size: 40px; text-align: center; margin-bottom: 10px; }
+        .version { text-align: center; font-size: 12px; opacity: 0.6; margin-bottom: 40px; }
 
-        body {
-            margin: 0; background: var(--bg); color: var(--neon);
-            font-family: 'Share Tech Mono', monospace;
-            display: grid; grid-template-columns: 380px 1fr 280px;
-            grid-template-rows: 1fr 220px; height: 100vh; overflow: hidden;
-        }
+        .module { background: rgba(255,255,255,0.02); padding: 20px; border-radius: 5px; border-left: 3px solid var(--accent); margin-bottom: 30px; }
+        h2 { font-size: 18px; color: #fff; text-transform: uppercase; }
 
-        /* --- UI KEHYS --- */
-        .sidebar-left {
-            background: var(--panel); border-right: 1px solid var(--neon);
-            padding: 20px; display: flex; flex-direction: column; gap: 15px;
-        }
+        /* ANALYYSALUE TESTAUSTA VARTEN */
+        #test-area { width: 100%; height: 100px; background: #111; border: 1px solid #333; color: #fff; padding: 15px; font-family: inherit; outline: none; resize: none; }
+        #status-light { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #00ff41; margin-right: 10px; }
+        .danger { color: var(--accent); font-weight: bold; }
 
-        #eye-scanner {
-            width: 100%; aspect-ratio: 1; border: 2px solid var(--neon);
-            position: relative; overflow: hidden; background: #000;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-        }
-
-        #webcam-feed {
-            width: 100%; height: 100%; object-fit: cover;
-            filter: brightness(1.2) contrast(1.5) sepia(100%) hue-rotate(80deg);
-            opacity: 0.4;
-        }
-
-        .scan-line {
-            position: absolute; width: 100%; height: 4px; background: var(--neon);
-            box-shadow: 0 0 20px var(--neon); animation: scanLine 3s infinite linear;
-        }
-        @keyframes scanLine { 0% { top: 0%; } 100% { top: 100%; } }
-
-        /* --- PÄÄNÄYTTÖ: PRISON DATA --- */
-        .main-display {
-            padding: 20px; position: relative;
-            background: radial-gradient(circle at center, #051a10 0%, #000 100%);
-        }
-
-        .window {
-            border: 1px solid var(--neon); background: rgba(0,0,0,0.85);
-            width: 100%; height: 95%; display: none; padding: 25px;
-            box-sizing: border-box; overflow-y: auto;
-        }
-
-        .prison-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px;
-        }
-
-        .grid-cell { border: 1px solid rgba(0,255,136,0.3); padding: 10px; font-size: 11px; }
-
-        /* --- TERMINAALI --- */
-        .footer-terminal {
-            grid-column: 1 / 4; background: #000; border-top: 2px solid var(--neon);
-            padding: 15px; display: flex; gap: 20px;
-        }
-
-        #terminal-output {
-            flex: 1; overflow-y: auto; font-size: 12px; color: #008844;
-            background: rgba(0,255,136,0.02); padding: 10px;
-        }
-
-        button {
-            background: var(--neon); color: #000; border: none; padding: 15px;
-            font-family: 'Orbitron'; font-weight: bold; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 2px;
-        }
-        button:hover { background: #fff; box-shadow: 0 0 15px #fff; }
-
-        /* ERROR OVERLAY */
-        #glitch-overlay {
-            position: fixed; inset: 0; background: rgba(255,0,0,0.1);
-            display: none; pointer-events: none; z-index: 1000;
-        }
+        .btn { background: var(--accent); color: white; border: none; padding: 10px 20px; cursor: pointer; font-family: 'Special Elite'; margin-top: 10px; }
+        .btn:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
 
-    <div id="glitch-overlay"></div>
+<div class="container">
+    <h1>AETHER SUPREMACY v23</h1>
+    <div class="version">DEPLOYMENT: PRODUCTION // STATUS: MONITORING</div>
 
-    <div class="sidebar-left">
-        <h2 style="font-family: 'Orbitron'; font-size: 14px; text-align: center;">AETHER-05 // CORE</h2>
+    <div class="module">
+        <h2>Mikä on Social Regret Filter?</h2>
+        <p>Tämä sovellus on Auroran ja Saulin yhteistyön tulos. Se valvoo viestintääsi ja estää impulsiiviset, vihaiset tai sekavat viestit ennen kuin ne tuhoavat elämäsi.</p>
+    </div>
+
+    <div class="module">
+        <h2><span id="status-light"></span>Moottorin Testaus</h2>
+        <p>Kirjoita viesti testataksesi suodatinta:</p>
+        <textarea id="test-area" placeholder="Esim. 'Mä vihaan sua niin paljon...'"></textarea>
+        <div id="analysis-result" style="margin-top: 10px; font-size: 14px;">Odotetaan syötettä...</div>
+    </div>
+
+    <div class="module">
+        <h2>Asennusohjeet</h2>
+        <ol>
+            <li>Lataa repositorion koodi ZIP-tiedostona.</li>
+            <li>Avaa Firefox ja mene osoitteeseen <b>about:debugging</b>.</li>
+            <li>Valitse 'This Firefox' ja 'Load Temporary Add-on'.</li>
+            <li>Valitse manifest.json.</li>
+        </ol>
+        <button class="btn" onclick="alert('Lataa koodi GitHubista ja asenna se selaimeesi suojellaksesi viestintääsi.')">Lataa Lisäosa</button>
+    </div>
+</div>
+
+<script>
+    const testArea = document.getElementById('test-area');
+    const result = document.getElementById('analysis-result');
+    const light = document.getElementById('status-light');
+
+    testArea.addEventListener('input', () => {
+        const text = testArea.value.toLowerCase();
         
-        <div id="eye-scanner">
-            <video id="webcam-feed" autoplay playsinline></video>
-            <div class="scan-line"></div>
-        </div>
-
-        <button onclick="bootSystem()">AKTIVOI JÄRJESTELMÄ</button>
-        
-        <div style="font-size: 11px; border: 1px solid rgba(0,255,136,0.2); padding: 10px;">
-            ASSET_LOADED: Prison_Mesh.fbx<br>
-            SKYBOX: Desert_Active<br>
-            NODE_STATUS: <span style="color:white">BYPASSED</span><br>
-            MEMORY_TYPE: STATIC_HTML
-        </div>
-    </div>
-
-    <div class="main-display">
-        <div id="idle-screen" style="text-align: center; margin-top: 15%;">
-            <h1 style="font-size: 5rem; opacity: 0.1; letter-spacing: 25px;">AETHER</h1>
-            <p>SANO KOMENTO: "ANALYYSI", "PAKO-REITTI" TAI "LUOVUUS"</p>
-        </div>
-
-        <div id="win-prison" class="window">
-            <h3>PRISON_ESCAPEMENT_V23</h3>
-            <div class="prison-grid" id="data-cells">
-                </div>
-            <div id="map-simulation" style="height: 200px; border: 1px dashed var(--neon); margin-top: 20px; display: flex; align-items: center; justify-content: center;">
-                [ RENDERING PRISON_MESH_GEOMETRY... ]
-            </div>
-        </div>
-    </div>
-
-    <div style="background: var(--panel); border-left: 1px solid var(--neon); padding: 15px; font-size: 10px;">
-        <h4 style="border-bottom: 1px solid var(--neon);">PROCESS_STREAM</h4>
-        <div id="process-list"></div>
-    </div>
-
-    <div class="footer-terminal">
-        <div id="terminal-output">
-            > AETHER-05 Supremacy alustettu...<br>
-            > Node.js/package.json ohitettu onnistuneesti.<br>
-            > Odotetaan äänikomentoa keksijältä.
-        </div>
-        <div style="width: 280px;">
-            <span style="font-size: 10px; opacity: 0.5;">MIKROFONIN TILA:</span><br>
-            <span id="speech-preview" style="color: #fff;">---</span>
-        </div>
-    </div>
-
-    <script>
-        const term = document.getElementById('terminal-output');
-        const speechText = document.getElementById('speech-preview');
-        const video = document.getElementById('webcam-feed');
-        
-        const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const synth = window.speechSynthesis;
-        let recognition;
-
-        if (Recognition) {
-            recognition = new Recognition();
-            recognition.lang = 'fi-FI';
-            recognition.onresult = (e) => handleAI(e.results[0][0].transcript.toLowerCase());
+        if (text.length < 5) {
+            result.innerText = "Odotetaan syötettä...";
+            light.style.background = "#00ff41";
+            return;
         }
 
-        function addLog(msg) {
-            term.innerHTML += `<br>> ${msg}`;
-            term.scrollTop = term.scrollHeight;
+        // TÄMÄ ON SAMA LOGIIKKA JOKA TULEE LISÄOSAAN
+        const triggers = ["vihaan", "paska", "erotaan", "vittu", "viimeinen kerta", "muuta pois", "pilaat kaiken"];
+        let detected = triggers.filter(word => text.includes(word));
+
+        if (detected.length > 0) {
+            light.style.background = "#ff4d4d";
+            result.innerHTML = `<span class="danger">VAARA HAVAITTU:</span> Viesti sisältää loukkaavia termejä: ${detected.join(", ")}. <br><b>Sauli sanoo:</b> "Noniin... poika, hengitä syvään. Älä lähetä tätä vielä."`;
+        } else if (text.length > 50 && (text.match(/  /g) || []).length > 2) {
+            light.style.background = "#ff4d4d";
+            result.innerHTML = `<span class="danger">VÄSYMYS/HUMALA-HAVAITTU:</span> Kirjoitusasusi on epävakaa. <br><b>Aurora sanoo:</b> "Hih, oletpa sä hassulla tuulella... ehkä nukutaan hetki ennen kuin painat lähetä?"`;
+        } else {
+            light.style.background = "#00ff41";
+            result.innerText = "Viesti näyttää turvalliselta. Sauli ja Aurora hyväksyvät.";
         }
+    });
+</script>
 
-        function speak(text) {
-            const ut = new SpeechSynthesisUtterance(text);
-            ut.lang = 'fi-FI';
-            ut.pitch = 0.8;
-            synth.speak(ut);
-            addLog(`AI: ${text}`);
-        }
-
-        async function bootSystem() {
-            addLog("KÄYNNISTETÄÄN OMNI-YDIN...");
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-                speak("Tervetuloa takaisin. Olen AETHER 0 5. Kaikki tiedostosi, kuten prison mesh, ovat analyysivalmiina.");
-                recognition.start();
-            } catch(e) {
-                addLog("KAMERAVIRHE: " + e.message);
-            }
-        }
-
-        function handleAI(cmd) {
-            speechText.innerText = cmd;
-            addLog(`USER: ${cmd}`);
-            
-            document.getElementById('idle-screen').style.display = 'none';
-            const win = document.getElementById('win-prison');
-            win.style.display = 'block';
-
-            if (cmd.includes("analyysi") || cmd.includes("vankila")) {
-                speak("Suoritetaan vankilarakenteen syväanalyysi.");
-                generateGridData();
-            }
-            else if (cmd.includes("hälytys")) {
-                speak("AKTIVOIDAAN TURVA-AJO. KAIKKI REAALIAIKAISET YHTEYDET SULJETAAN.");
-                document.getElementById('glitch-overlay').style.display = 'block';
-                setTimeout(() => document.getElementById('glitch-overlay').style.display = 'none', 3000);
-            }
-            else {
-                speak("Käsittelen pyyntöäsi Supremacy-tietokannassa.");
-            }
-        }
-
-        function generateGridData() {
-            const grid = document.getElementById('data-cells');
-            grid.innerHTML = "";
-            const assets = ["SECTOR_A", "CELL_BLOCK_9", "FENCE_ALPHA", "SKYBOX_COORD", "PRISON_MESH", "GUARD_PATH"];
-            assets.forEach(asset => {
-                grid.innerHTML += `<div class="grid-cell"><b>${asset}</b><br>STATUS: OK<br>VAL: ${Math.random().toFixed(4)}</div>`;
-            });
-        }
-
-        // MATRIX DATA FLOW
-        setInterval(() => {
-            const flow = document.getElementById('process-list');
-            const d = document.createElement('div');
-            d.innerText = `0x${Math.floor(Math.random()*16777215).toString(16).toUpperCase()}: EXECUTE_SYNC`;
-            flow.prepend(d);
-            if(flow.childNodes.length > 20) flow.removeChild(flow.lastChild);
-        }, 500);
-
-    </script>
 </body>
 </html>
