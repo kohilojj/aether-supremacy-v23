@@ -2,28 +2,193 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <title>AETHER v27 | Digitaalinen Suojelija</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHER SUPREMACY v27.1 | Virallinen Komentokeskus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: #ff4d4d; font-family: 'Courier New', monospace; text-align: center; padding: 50px; }
-        .box { border: 2px solid #ff4d4d; padding: 30px; display: inline-block; border-radius: 15px; background: #111; }
-        h1 { font-size: 3em; text-shadow: 0 0 10px #ff4d4d; }
-        .status { color: #ffafcc; font-size: 1.2em; margin-bottom: 20px; }
-        .btn { background: #ff4d4d; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-block; margin-top: 20px; }
-        .step { text-align: left; max-width: 500px; margin: 20px auto; color: #ccc; }
+        :root {
+            --primary: #ff4d4d;
+            --secondary: #ffafcc;
+            --bg: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glow: 0 0 20px rgba(255, 77, 77, 0.4);
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 50%, #1a0505 0%, #0a0a0a 100%);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Special Elite', cursive;
+            font-size: clamp(40px, 8vw, 70px);
+            color: var(--primary);
+            margin: 0;
+            text-shadow: var(--glow);
+            letter-spacing: 5px;
+        }
+
+        .status-bar {
+            background: var(--glass);
+            padding: 10px 30px;
+            border-radius: 50px;
+            border: 1px solid var(--primary);
+            color: var(--secondary);
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: var(--glow);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        main {
+            max-width: 900px;
+            width: 90%;
+            margin-bottom: 100px;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 30px;
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            font-family: 'Special Elite', cursive;
+        }
+
+        .instructions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .step {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .step b { color: var(--secondary); display: block; margin-bottom: 5px; font-size: 1.2em; }
+
+        .demo-box {
+            background: #000;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            font-family: 'Courier New', monospace;
+            border: 1px dashed #444;
+        }
+
+        .btn-github {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin-top: 40px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+            border-radius: 10px;
+            transition: 0.3s;
+            font-family: 'Special Elite', cursive;
+        }
+
+        .btn-github:hover {
+            background: #ff3333;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 77, 77, 0.5);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 40px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .quote {
+            font-style: italic;
+            color: var(--secondary);
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>AETHER v27.1</h1>
-        <p class="status">🛡️ STATUS: AKTIVITTU / SUOJAUS PÄÄLLÄ</p>
-        
-        <div class="step">
-            <p><b>1.</b> Lisää GitHubiin <b>manifest.json</b></p>
-            <p><b>2.</b> Lisää GitHubiin <b>content.js</b></p>
-            <p><b>3.</b> Lataa ne Firefoxiin (about:debugging)</p>
-        </div>
 
-        <a href="https://github.com/kohilojj/aether-supremacy-v23" class="btn">KATSO KOODIT GITHUBISTA</a>
+<header>
+    <h1>AETHER v27.1</h1>
+    <div class="status-bar">🛡️ JÄRJESTELMÄ: VALMIS ASENNETTAVAKSI</div>
+    <p class="quote">"Noniin... tehdään internetistä taas herrasmiesmäinen paikka." - Sauli</p>
+</header>
+
+<main>
+    <div class="card">
+        <h2>MITEN TÄMÄ TOIMII?</h2>
+        <p>Aether on digitaalinen omatunto, joka vahtii sekä muiden kirjoituksia että sinun omia sanojasi. Se toimii Google Messagesissa, YouTubessa, WhatsAppissa ja kaikkialla muualla.</p>
+        
+        <div class="demo-box">
+            <span style="color: #666;">// Ennen Aetheria:</span><br>
+            "Oot vitun ruma"<br><br>
+            <span style="color: var(--secondary);">// Aetherin jälkeen:</span><br>
+            "🌸 [Viesti puhdistettu - Valitsen tänään ystävällisyyden ✨] 🌸"
+        </div>
     </div>
+
+    <div class="card">
+        <h2>ASENNUSOHJEET (ERITTÄIN HELPPO)</h2>
+        <div class="instructions">
+            <div class="step">
+                <b>VAIHE 1</b>
+                Varmista, että GitHubissa on tiedostot <i>manifest.json</i> ja <i>content.js</i>.
+            </div>
+            <div class="step">
+                <b>VAIHE 2</b>
+                Lataa projektisi ZIP-tiedostona GitHubista ja pura se koneellesi.
+            </div>
+            <div class="step">
+                <b>VAIHE 3</b>
+                Mene Firefoxissa osoitteeseen <b>about:debugging</b> ja lataa manifest-tiedosto.
+            </div>
+        </div>
+    </div>
+
+    <a href="https://github.com/kohilojj/aether-supremacy-v23" class="btn-github">SIIRRY GITHUB-REPOSITORIOON</a>
+</main>
+
+<footer>
+    © 2026 Aether Protocol | Luoja: Keksijä | Vartijat: Sauli & Aurora
+</footer>
+
 </body>
 </html>
