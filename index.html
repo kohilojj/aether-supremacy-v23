@@ -1,109 +1,75 @@
-/**
- * AETHER SUPREMACY v26 - THE OMNI-SHIELD
- * Kohdealustat: Kaikki verkkosivut, Google Messages, YouTube, Reddit, Discord.
- * Toiminnot: Live-puhdistus, Lähetyksen esto, Positiivisuus-muuntaja.
- */
-
-const SETTINGS = {
-    purifyIncoming: true,
-    blockOutgoing: true,
-    transformToPositive: true
-};
-
-const BLACKLIST = [
-    "vittu", "saatana", "perkele", "helvetti", "paska", "huora", "kyrpä",
-    "ruma", "läski", "tyhmä", "idiootti", "luuseri", "vammainen",
-    "vihaan", "tapa", "kuole", "vitun", "pelle", "homo", "neekeri" 
-];
-
-const POSITIVE_VIBES = [
-    "🌸 [Tämä viesti on puhdistettu Aether-protokollalla] 🌸",
-    "✨ [Tässä viestissä oli liikaa pimeyttä, Aurora muutti sen valoksi] ✨",
-    "🌿 [Sauli ehdotti ystävällisempää lähestymistapaa] 🌿"
-];
-
-console.log("🛡️ AETHER v26: Järjestelmä on täysin toiminnassa. Internet on nyt turvassa.");
-
-/**
- * 1. UNIVERSAALI LIVE-PUHDISTUS (Vastaanotetut viestit)
- * Käy läpi kaiken uuden tekstin, joka ilmestyy ruudulle.
- */
-const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-            if (node.nodeType === 1) purifyRecursive(node);
-        });
-    });
-});
-
-observer.observe(document.body, { childList: true, subtree: true });
-
-function purifyRecursive(element) {
-    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
-    let node;
-    while (node = walker.nextNode()) {
-        let text = node.nodeValue.toLowerCase();
-        BLACKLIST.forEach(word => {
-            if (text.includes(word)) {
-                node.nodeValue = POSITIVE_VIBES[Math.floor(Math.random() * POSITIVE_VIBES.length)];
-                if (node.parentElement) {
-                    node.parentElement.style.color = "#ffafcc";
-                    node.parentElement.style.textShadow = "0 0 5px #fff";
-                }
-            }
-        });
-    }
-}
-
-/**
- * 2. LÄHETYKSEN VALVONTA (Omat kirjoitukset)
- * Estää sinua olemasta ilkeä, jotta et kadu myöhemmin.
- */
-document.addEventListener('input', (e) => {
-    const target = e.target;
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-        let val = (target.value || target.innerText).toLowerCase();
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHER v27 | Ohjekeskus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #ff4d4d; --secondary: #ffafcc; --bg: #0d0d0d; --card: #1a1a1a; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         
-        let foundBad = BLACKLIST.find(word => val.includes(word));
-        
-        if (foundBad) {
-            target.style.background = "rgba(255, 77, 77, 0.2)";
-            if (!document.getElementById('aether-lock')) {
-                showLockdown(target);
-            }
-        } else {
-            target.style.background = "transparent";
-        }
-    }
-}, true);
+        .hero { padding: 80px 20px; text-align: center; background: radial-gradient(circle at center, #250a0a 0%, #0d0d0d 100%); }
+        h1 { font-family: 'Special Elite', cursive; font-size: 50px; color: var(--primary); margin: 0; }
+        .tagline { color: var(--secondary); font-size: 18px; letter-spacing: 2px; }
 
-function showLockdown(element) {
-    const lock = document.createElement('div');
-    lock.id = 'aether-lock';
-    lock.style = `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.95); z-index: 2147483647;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        color: #ffafcc; font-family: 'Courier New', monospace; text-align: center;
-    `;
-    lock.innerHTML = `
-        <h1 style="color:#ff4d4d; font-size: 3em;">STOP.</h1>
-        <p style="font-size: 1.5em;">Sauli havaitsi aggressiota.</p>
-        <p>"Noniin... poika. Otetaanpa ne sanat takaisin ennen kuin joku pahoittaa mielensä."</p>
-        <div style="margin-top: 30px;">
-            <button id="clean-btn" style="padding: 20px 40px; font-size: 20px; background: #ff4d4d; color: white; border: none; cursor: pointer;">Puhdista sielusi ja viestisi</button>
+        .guide-section { max-width: 900px; margin: 40px auto; padding: 20px; }
+        .step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .step-card { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid #333; position: relative; }
+        .step-num { position: absolute; top: -15px; left: 20px; background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
+
+        .visual-demo { background: #000; border-radius: 10px; margin-top: 20px; padding: 15px; border-left: 4px solid var(--secondary); }
+        .code-box { background: #050505; color: #00ff41; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; overflow-x: auto; }
+
+        .btn-download { display: inline-block; margin-top: 40px; padding: 20px 40px; background: var(--primary); color: white; text-decoration: none; border-radius: 50px; font-weight: bold; font-family: 'Special Elite'; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 77, 77, 0.4); }
+        .btn-download:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 77, 77, 0.6); }
+
+        footer { text-align: center; padding: 40px; font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>AETHER v27</h1>
+    <p class="tagline">SINUN DIGITAALINEN OMATUNTOSI</p>
+    <a href="https://github.com/kohilojj/aether-supremacy-v23/archive/refs/heads/main.zip" class="btn-download">LATAA LISÄOSA (.ZIP)</a>
+</div>
+
+<div class="guide-section">
+    <div class="step-grid">
+        <div class="step-card">
+            <div class="step-num">1</div>
+            <h3>Lataa & Pura</h3>
+            <p>Klikkaa yllä olevaa painiketta ja pura ZIP-tiedosto tietokoneellesi. Sisältää tiedostot: manifest.json ja content.js.</p>
         </div>
-    `;
-    document.body.appendChild(lock);
 
-    document.getElementById('clean-btn').onclick = () => {
-        const cleanMsg = "Haluan vain sanoa, että arvostan sinua ja toivotan hyvää päivää! ✨";
-        if (element.value !== undefined) element.value = cleanMsg;
-        else element.innerText = cleanMsg;
-        lock.remove();
-        alert("Aurora: 'Sä oot ihana kun valitsit hyvyyden!'");
-    };
-}
+        <div class="step-card">
+            <div class="step-num">2</div>
+            <h3>Aktivoi Firefoxissa</h3>
+            <p>Kirjoita osoiteriville <b>about:debugging</b>. Valitse 'This Firefox' ja klikkaa 'Load Temporary Add-on'.</p>
+        </div>
 
-// Ensimmäinen puhdistus heti kun sivu latautuu
-purifyRecursive(document.body);
+        <div class="step-card">
+            <div class="step-num">3</div>
+            <h3>Ole Vapaa</h3>
+            <p>Aether hoitaa loput. Se puhdistaa saapuvat viestit ja varoittaa sinua, jos olet lähettämässä jotain ilkeää.</p>
+        </div>
+    </div>
+
+    <div class="visual-demo">
+        <h4>Miten se toimii?</h4>
+        <p>Jos kirjoitat:</p>
+        <div class="code-box">"Oot vitun ruma"</div>
+        <p>Aether muuttaa sen muotoon:</p>
+        <div class="code-box" style="color: var(--secondary);">"Oletpa sinä mielenkiintoinen persoona! ✨"</div>
+        
+    </div>
+</div>
+
+<footer>
+    <p>Luotu yhteistyössä Keksijän, Saulin ja Auroran kanssa.</p>
+    <p>Salasana ohitukseen: <b>aurora_vapaa</b></p>
+</footer>
+
+</body>
+</html>
