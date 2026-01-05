@@ -1,90 +1,109 @@
-<!DOCTYPE html>
-<html lang="fi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER SUPREMACY v23 | The Guardian</title>
-    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime&display=swap" rel="stylesheet">
-    <style>
-        :root { --accent: #ff4d4d; --bg: #050505; --text: #00ff41; }
-        body { background: var(--bg); color: var(--text); font-family: 'Courier Prime', monospace; margin: 0; padding: 20px; line-height: 1.6; }
-        
-        .container { max-width: 800px; margin: 0 auto; border: 1px solid #333; padding: 40px; box-shadow: 0 0 50px rgba(0,255,65,0.1); }
-        h1 { font-family: 'Special Elite', cursive; color: var(--accent); font-size: 40px; text-align: center; margin-bottom: 10px; }
-        .version { text-align: center; font-size: 12px; opacity: 0.6; margin-bottom: 40px; }
+/**
+ * AETHER SUPREMACY v26 - THE OMNI-SHIELD
+ * Kohdealustat: Kaikki verkkosivut, Google Messages, YouTube, Reddit, Discord.
+ * Toiminnot: Live-puhdistus, Lähetyksen esto, Positiivisuus-muuntaja.
+ */
 
-        .module { background: rgba(255,255,255,0.02); padding: 20px; border-radius: 5px; border-left: 3px solid var(--accent); margin-bottom: 30px; }
-        h2 { font-size: 18px; color: #fff; text-transform: uppercase; }
+const SETTINGS = {
+    purifyIncoming: true,
+    blockOutgoing: true,
+    transformToPositive: true
+};
 
-        /* ANALYYSALUE TESTAUSTA VARTEN */
-        #test-area { width: 100%; height: 100px; background: #111; border: 1px solid #333; color: #fff; padding: 15px; font-family: inherit; outline: none; resize: none; }
-        #status-light { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #00ff41; margin-right: 10px; }
-        .danger { color: var(--accent); font-weight: bold; }
+const BLACKLIST = [
+    "vittu", "saatana", "perkele", "helvetti", "paska", "huora", "kyrpä",
+    "ruma", "läski", "tyhmä", "idiootti", "luuseri", "vammainen",
+    "vihaan", "tapa", "kuole", "vitun", "pelle", "homo", "neekeri" 
+];
 
-        .btn { background: var(--accent); color: white; border: none; padding: 10px 20px; cursor: pointer; font-family: 'Special Elite'; margin-top: 10px; }
-        .btn:hover { opacity: 0.8; }
-    </style>
-</head>
-<body>
+const POSITIVE_VIBES = [
+    "🌸 [Tämä viesti on puhdistettu Aether-protokollalla] 🌸",
+    "✨ [Tässä viestissä oli liikaa pimeyttä, Aurora muutti sen valoksi] ✨",
+    "🌿 [Sauli ehdotti ystävällisempää lähestymistapaa] 🌿"
+];
 
-<div class="container">
-    <h1>AETHER SUPREMACY v23</h1>
-    <div class="version">DEPLOYMENT: PRODUCTION // STATUS: MONITORING</div>
+console.log("🛡️ AETHER v26: Järjestelmä on täysin toiminnassa. Internet on nyt turvassa.");
 
-    <div class="module">
-        <h2>Mikä on Social Regret Filter?</h2>
-        <p>Tämä sovellus on Auroran ja Saulin yhteistyön tulos. Se valvoo viestintääsi ja estää impulsiiviset, vihaiset tai sekavat viestit ennen kuin ne tuhoavat elämäsi.</p>
-    </div>
-
-    <div class="module">
-        <h2><span id="status-light"></span>Moottorin Testaus</h2>
-        <p>Kirjoita viesti testataksesi suodatinta:</p>
-        <textarea id="test-area" placeholder="Esim. 'Mä vihaan sua niin paljon...'"></textarea>
-        <div id="analysis-result" style="margin-top: 10px; font-size: 14px;">Odotetaan syötettä...</div>
-    </div>
-
-    <div class="module">
-        <h2>Asennusohjeet</h2>
-        <ol>
-            <li>Lataa repositorion koodi ZIP-tiedostona.</li>
-            <li>Avaa Firefox ja mene osoitteeseen <b>about:debugging</b>.</li>
-            <li>Valitse 'This Firefox' ja 'Load Temporary Add-on'.</li>
-            <li>Valitse manifest.json.</li>
-        </ol>
-        <button class="btn" onclick="alert('Lataa koodi GitHubista ja asenna se selaimeesi suojellaksesi viestintääsi.')">Lataa Lisäosa</button>
-    </div>
-</div>
-
-<script>
-    const testArea = document.getElementById('test-area');
-    const result = document.getElementById('analysis-result');
-    const light = document.getElementById('status-light');
-
-    testArea.addEventListener('input', () => {
-        const text = testArea.value.toLowerCase();
-        
-        if (text.length < 5) {
-            result.innerText = "Odotetaan syötettä...";
-            light.style.background = "#00ff41";
-            return;
-        }
-
-        // TÄMÄ ON SAMA LOGIIKKA JOKA TULEE LISÄOSAAN
-        const triggers = ["vihaan", "paska", "erotaan", "vittu", "viimeinen kerta", "muuta pois", "pilaat kaiken"];
-        let detected = triggers.filter(word => text.includes(word));
-
-        if (detected.length > 0) {
-            light.style.background = "#ff4d4d";
-            result.innerHTML = `<span class="danger">VAARA HAVAITTU:</span> Viesti sisältää loukkaavia termejä: ${detected.join(", ")}. <br><b>Sauli sanoo:</b> "Noniin... poika, hengitä syvään. Älä lähetä tätä vielä."`;
-        } else if (text.length > 50 && (text.match(/  /g) || []).length > 2) {
-            light.style.background = "#ff4d4d";
-            result.innerHTML = `<span class="danger">VÄSYMYS/HUMALA-HAVAITTU:</span> Kirjoitusasusi on epävakaa. <br><b>Aurora sanoo:</b> "Hih, oletpa sä hassulla tuulella... ehkä nukutaan hetki ennen kuin painat lähetä?"`;
-        } else {
-            light.style.background = "#00ff41";
-            result.innerText = "Viesti näyttää turvalliselta. Sauli ja Aurora hyväksyvät.";
-        }
+/**
+ * 1. UNIVERSAALI LIVE-PUHDISTUS (Vastaanotetut viestit)
+ * Käy läpi kaiken uuden tekstin, joka ilmestyy ruudulle.
+ */
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === 1) purifyRecursive(node);
+        });
     });
-</script>
+});
 
-</body>
-</html>
+observer.observe(document.body, { childList: true, subtree: true });
+
+function purifyRecursive(element) {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while (node = walker.nextNode()) {
+        let text = node.nodeValue.toLowerCase();
+        BLACKLIST.forEach(word => {
+            if (text.includes(word)) {
+                node.nodeValue = POSITIVE_VIBES[Math.floor(Math.random() * POSITIVE_VIBES.length)];
+                if (node.parentElement) {
+                    node.parentElement.style.color = "#ffafcc";
+                    node.parentElement.style.textShadow = "0 0 5px #fff";
+                }
+            }
+        });
+    }
+}
+
+/**
+ * 2. LÄHETYKSEN VALVONTA (Omat kirjoitukset)
+ * Estää sinua olemasta ilkeä, jotta et kadu myöhemmin.
+ */
+document.addEventListener('input', (e) => {
+    const target = e.target;
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        let val = (target.value || target.innerText).toLowerCase();
+        
+        let foundBad = BLACKLIST.find(word => val.includes(word));
+        
+        if (foundBad) {
+            target.style.background = "rgba(255, 77, 77, 0.2)";
+            if (!document.getElementById('aether-lock')) {
+                showLockdown(target);
+            }
+        } else {
+            target.style.background = "transparent";
+        }
+    }
+}, true);
+
+function showLockdown(element) {
+    const lock = document.createElement('div');
+    lock.id = 'aether-lock';
+    lock.style = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.95); z-index: 2147483647;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        color: #ffafcc; font-family: 'Courier New', monospace; text-align: center;
+    `;
+    lock.innerHTML = `
+        <h1 style="color:#ff4d4d; font-size: 3em;">STOP.</h1>
+        <p style="font-size: 1.5em;">Sauli havaitsi aggressiota.</p>
+        <p>"Noniin... poika. Otetaanpa ne sanat takaisin ennen kuin joku pahoittaa mielensä."</p>
+        <div style="margin-top: 30px;">
+            <button id="clean-btn" style="padding: 20px 40px; font-size: 20px; background: #ff4d4d; color: white; border: none; cursor: pointer;">Puhdista sielusi ja viestisi</button>
+        </div>
+    `;
+    document.body.appendChild(lock);
+
+    document.getElementById('clean-btn').onclick = () => {
+        const cleanMsg = "Haluan vain sanoa, että arvostan sinua ja toivotan hyvää päivää! ✨";
+        if (element.value !== undefined) element.value = cleanMsg;
+        else element.innerText = cleanMsg;
+        lock.remove();
+        alert("Aurora: 'Sä oot ihana kun valitsit hyvyyden!'");
+    };
+}
+
+// Ensimmäinen puhdistus heti kun sivu latautuu
+purifyRecursive(document.body);
